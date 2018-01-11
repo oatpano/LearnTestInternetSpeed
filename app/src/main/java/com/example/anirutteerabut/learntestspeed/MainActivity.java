@@ -64,6 +64,17 @@ public class MainActivity extends AppCompatActivity {
                     Log.v("speedtest Download" + countTestSpeed, "[COMPLETED] rate in octet/s : " + report.getTransferRateOctet());
                     Log.v("speedtest Download" + countTestSpeed, "[COMPLETED] rate in bit/s   : " + report.getTransferRateBit());
 
+                    speedModel.progress = 50;
+                    speedModel.downloadSpeed = report.getTransferRateBit();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.setDataList(countTestSpeed, speedModel);
+
+                        }
+                    });
+
                     startTestUpload();
 
                 }
@@ -114,6 +125,17 @@ public class MainActivity extends AppCompatActivity {
                     // called when download/upload is finished
                     Log.v("speedtest Upload" + countTestSpeed, "[COMPLETED] rate in octet/s : " + report.getTransferRateOctet());
                     Log.v("speedtest Upload" + countTestSpeed, "[COMPLETED] rate in bit/s   : " + report.getTransferRateBit());
+
+                    speedModel.progress = 100;
+                    speedModel.uploadSpeed = report.getTransferRateBit();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.setDataList(countTestSpeed, speedModel);
+
+                        }
+                    });
 
                     countTestSpeed++;
                     if (countTestSpeed < LIMIT) {
