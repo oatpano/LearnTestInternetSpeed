@@ -21,6 +21,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
             dataList.set(position, data);
 
         }
+
+        notifyDataSetChanged();
+
     }
 
     @Override

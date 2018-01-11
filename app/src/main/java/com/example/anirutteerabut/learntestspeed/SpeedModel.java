@@ -7,7 +7,7 @@ public class SpeedModel {
     public BigDecimal uploadSpeed;
     public BigDecimal downloadSpeed;
 
-    public SpeedModel(int progress, int uploadSpeed, int downloadSpeed) {
+    public SpeedModel(int progress, BigDecimal uploadSpeed, BigDecimal downloadSpeed) {
         this.progress = progress;
         this.uploadSpeed = uploadSpeed;
         this.downloadSpeed = downloadSpeed;

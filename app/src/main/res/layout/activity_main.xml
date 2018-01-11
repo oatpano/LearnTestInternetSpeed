@@ -36,6 +36,7 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <android.support.v7.widget.RecyclerView
+        tools:listitem="@layout/view_item"
         android:id="@+id/recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
