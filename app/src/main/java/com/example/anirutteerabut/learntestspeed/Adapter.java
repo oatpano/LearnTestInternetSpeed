@@ -6,14 +6,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
-    private List<SpeedModel> dataList;
+    private List<SpeedModel> dataList = new ArrayList<>();
 
-    public void setDataList(List<SpeedModel> dataList) {
-        this.dataList = dataList;
+    public void setDataList(int position, SpeedModel data) {
+        if (dataList.size() <= position) {
+            dataList.add(data);
+
+        } else {
+            dataList.set(position, data);
+
+        }
     }
 
     @Override
@@ -29,6 +36,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
     @Override
     public int getItemCount() {
+        if (dataList == null)
+            return 0;
+
         return dataList.size();
     }
 

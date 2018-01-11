@@ -14,26 +14,30 @@ import fr.bmartel.speedtest.model.SpeedTestError;
 
 public class MainActivity extends AppCompatActivity {
 
-    int countDownload = 0;
+    int countTestSpeed = 0;
     int countUpload = 0;
     int LIMIT = 10;
+    private RecyclerView recyclerView;
+    private Adapter adapter;
+    private SpeedModel speedModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerview);
+        recyclerView = findViewById(R.id.recyclerview);
 
         startTestDownload();
-        startTestUpload();
 
+        adapter = new Adapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new Adapter());
+        recyclerView.setAdapter(adapter);
 
     }
 
     private void startTestDownload() {
+        speedModel = new SpeedModel(0, 0, 0);
         new SpeedDownloadTestTask().execute();
     }
 
@@ -55,13 +59,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onCompletion(SpeedTestReport report) {
                     // called when download/upload is finished
-                    Log.v("speedtest Download" + countDownload, "[COMPLETED] rate in octet/s : " + report.getTransferRateOctet());
-                    Log.v("speedtest Download" + countDownload, "[COMPLETED] rate in bit/s   : " + report.getTransferRateBit());
+                    Log.v("speedtest Download" + countTestSpeed, "[COMPLETED] rate in octet/s : " + report.getTransferRateOctet());
+                    Log.v("speedtest Download" + countTestSpeed, "[COMPLETED] rate in bit/s   : " + report.getTransferRateBit());
 
-                    if (countDownload < LIMIT) {
-                        startTestDownload();
-                        countDownload++;
-                    }
+                    startTestUpload();
 
                 }
 
@@ -73,9 +74,14 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onProgress(float percent, SpeedTestReport report) {
                     // called to notify download/upload progress
-                    Log.v("speedtest Download" + countDownload, "[PROGRESS] progress : " + percent + "%");
-                    Log.v("speedtest Download" + countDownload, "[PROGRESS] rate in octet/s : " + report.getTransferRateOctet());
-                    Log.v("speedtest Download" + countDownload, "[PROGRESS] rate in bit/s   : " + report.getTransferRateBit());
+                    Log.v("speedtest Download" + countTestSpeed, "[PROGRESS] progress : " + percent + "%");
+                    Log.v("speedtest Download" + countTestSpeed, "[PROGRESS] rate in octet/s : " + report.getTransferRateOctet());
+                    Log.v("speedtest Download" + countTestSpeed, "[PROGRESS] rate in bit/s   : " + report.getTransferRateBit());
+
+                    speedModel.progress = percent / 2;
+                    speedModel.downloadSpeed = report.getTransferRateBit();
+
+                    adapter.setDataList(countTestSpeed, speedModel);
                 }
             });
 
@@ -101,9 +107,9 @@ public class MainActivity extends AppCompatActivity {
                     Log.v("speedtest Upload" + countUpload, "[COMPLETED] rate in octet/s : " + report.getTransferRateOctet());
                     Log.v("speedtest Upload" + countUpload, "[COMPLETED] rate in bit/s   : " + report.getTransferRateBit());
 
-                    if (countUpload < LIMIT) {
-                        startTestUpload();
-                        countUpload++;
+                    if (countTestSpeed < LIMIT) {
+                        startTestDownload();
+                        countTestSpeed++;
                     }
                 }
 
@@ -118,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.v("speedtest Upload" + countUpload, "[PROGRESS] progress : " + percent + "%");
                     Log.v("speedtest Upload" + countUpload, "[PROGRESS] rate in octet/s : " + report.getTransferRateOctet());
                     Log.v("speedtest Upload" + countUpload, "[PROGRESS] rate in bit/s   : " + report.getTransferRateBit());
+
+                    speedModel.progress = (percent / 2) + speedModel.progress;
+                    speedModel.uploadSpeed = report.getTransferRateBit();
+
+                    adapter.setDataList(countTestSpeed, speedModel);
                 }
             });
 
